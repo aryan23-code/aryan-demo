@@ -1,0 +1,30 @@
+import face_recognition
+import cv2
+import os
+import numpy as np
+import pickle
+
+def extract_features():
+    dataset_path = "dataset"
+    encodings = []
+    names = []
+
+    for user in os.listdir(dataset_path):
+        user_folder = os.path.join(dataset_path, user)
+        for file in os.listdir(user_folder):
+            img_path = os.path.join(user_folder, file)
+            image = face_recognition.load_image_file(img_path)
+            face_enc = face_recognition.face_encodings(image)
+
+            if len(face_enc) > 0:
+                encodings.append(face_enc[0])
+                names.append(user)
+
+    data = {"encodings": encodings, "names": names}
+    with open("face_encodings.pkl", "wb") as f:
+        pickle.dump(data, f)
+
+    print("Features Extracted & Saved!")
+
+if __name__ == "__main__":
+    extract_features()
